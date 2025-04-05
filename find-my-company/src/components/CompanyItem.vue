@@ -1,29 +1,27 @@
 <script setup>
-import { ref } from 'vue'
-
 defineProps({
-  msg: String,
+  speciality: String,
+  name: String,
+  city: String,
+  pc: String,
 })
-
-const count = ref(0)
 </script>
 
 <template>
-  <div class="card">
-    <h3>{{ msg }}</h3>
-    <p>Nom de l'entreprise</p>
-    <p>Ville : Poitiers</p>
-    <p>Code Postal : Poitiers</p>
-    <p>Cliquer pour plus d'imformations</p>
+  <div class="company-item">
+    <h3>{{ speciality }}</h3>
+    <p>{{ name }}</p>
+    <p>Ville : {{ name }}</p>
+    <p>Code Postal : {{ city }}</p>
+    <p>Cliquer pour plus d'informations</p>
   </div>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-  background-color: red;
-}
-.card {
-    background-color: green;
+.company-item {
+  background-color: #2e8b57;
+  color: white;
+  border-radius: 4px;
+  padding: 10px;
 }
 </style>
