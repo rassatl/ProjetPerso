@@ -15,6 +15,6 @@ watch(isOpen, (newVal) => {
 
 <template>
   <ListeDeroulante :isOpen="isOpen" @toggle="isOpen = !isOpen" />
-  <!-- <MapComponent :isOpen="isOpen" /> -->
+  <MapComponent :isOpen="isOpen" />
 </template>
  

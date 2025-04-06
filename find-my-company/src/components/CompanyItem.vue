@@ -13,13 +13,30 @@ defineProps({
   <div class="company-item">
     <div class="top">
       <div class="left">
-        <h3 class="speciality">{{ speciality === "Développement Logiciel, Tests et Qualité" ? "Dev Logiciel" : speciality }}</h3>
-        <p class="name"><strong>{{ name }}</strong></p>
+        <h3 class="speciality">
+          <span v-if="speciality" class="text">
+            {{ speciality === "Développement Logiciel, Tests et Qualité" ? "Dev Logiciel" : speciality }}
+          </span>
+          <span v-else class="skeleton skeleton-text"></span>
+        </h3>
+        <p class="name">
+          <strong v-if="name" class="text">{{ name }}</strong>
+          <span v-else class="skeleton skeleton-text"></span>
+        </p>
       </div>
       <div class="right">
-        <p class="city">Ville : {{ city }}</p>
-        <p class="country">Pays : {{ country }}</p>
-        <p class="pc">Code Postal : {{ pc }}</p>
+        <p class="city">
+          <span v-if="city">Ville : {{ city }}</span>
+          <span v-else class="skeleton skeleton-text short"></span>
+        </p>
+        <p class="country">
+          <span v-if="country">Pays : {{ country }}</span>
+          <span v-else class="skeleton skeleton-text short"></span>
+        </p>
+        <p class="pc">
+          <span v-if="pc">Code Postal : {{ pc }}</span>
+          <span v-else class="skeleton skeleton-text short"></span>
+        </p>
       </div>
     </div>
     <p class="more">Cliquer pour plus d'informations</p>
@@ -62,7 +79,7 @@ defineProps({
   text-align: left;
 }
 
-.right p{
+.right p {
   margin: 0;
   font-size: 0.9em;
   color: var(--white);
@@ -84,7 +101,7 @@ defineProps({
   color: var(--white);
 }
 
-.city, .pc {
+.city, .pc, .country {
   margin: 0;
   font-size: 0.95em;
 }
@@ -97,5 +114,30 @@ defineProps({
   padding-top: 6px;
   text-align: center;
   margin: 0;
+}
+
+/* 🔄 Skeleton Loading Style */
+.skeleton {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  animation: pulse 1.2s infinite ease-in-out;
+  height: 1em;
+}
+
+.skeleton-text {
+  width: 70%;
+  height: 1em;
+  margin: 2px 0;
+}
+
+.skeleton-text.short {
+  width: 50%;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.5; }
 }
 </style>

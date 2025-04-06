@@ -131,6 +131,7 @@ h1{
   font-size: 2rem;
   margin-bottom: 1rem;
 }
+
 .separator {
   border: none;
   height: 4px;
