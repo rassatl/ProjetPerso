@@ -36,6 +36,11 @@ function toggleSideBar() {
   console.log('Sidebar is now', !props.isOpen ? 'open ' + !props.isOpen : 'closed ' + !props.isOpen )
   emit('toggle')
 }
+
+function onPlusClick() {
+  console.log('🆕 Bouton + cliqué') // Tu pourras remplacer ça par une modale, un formulaire, etc.
+}
+
 </script>
 
 <template>
@@ -44,7 +49,13 @@ function toggleSideBar() {
       class="sidebar"
       :class="{ closed: !isOpen }"
       :style="{ width: isOpen ? '400px' : '0' }">
-      
+      <div class="top-right-action" v-if="isOpen">
+        <button @click="onPlusClick" class="plus-button" aria-label="Ajouter">+</button>
+      </div>
+
+      <hr class="separator" />
+      <h1>Find My Company</h1>
+      <hr class="separator" />
       <h2 v-if="isOpen">Liste des entreprises</h2>
 
       <div v-if="isOpen" class="filter-bar">
@@ -83,6 +94,18 @@ function toggleSideBar() {
 </template>
 
 <style scoped>
+h1{
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.separator {
+  border: none;
+  height: 4px;
+  background-color: var(--red-esigelec);
+  margin: 10px 0;
+  width: 100%;
+}
+
 h2 {
   color: var(--red-esigelec);
   margin-bottom: 1rem;
@@ -160,4 +183,43 @@ select {
   border: none;
   font-size: 1rem;
 }
+
+.top-right-action {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.plus-button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--red-esigelec);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  border-radius: 4px; /* Optionnel : coin doux */
+  outline: none;
+}
+.plus-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+.plus-button:focus:not(:focus-visible) {
+  outline: none;
+}
+.plus-button:hover {
+  color: #a3080d;
+  transform: scale(1.2);
+}
+
+
+
+
 </style>
