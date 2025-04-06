@@ -38,6 +38,7 @@ const emit = defineEmits(['close']);
   position: relative;
 }
 .modal-close {
+  color: var(--black);
   position: absolute;
   top: 0px;
   right: 0px;

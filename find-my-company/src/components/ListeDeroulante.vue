@@ -6,6 +6,10 @@ import CompanyItem from './CompanyItem.vue'
 import Modal from './Modal.vue';
 import AddCompanyForm from './AddCompanyForm.vue';
 
+// Props et événements
+const props = defineProps({isOpen: Boolean})
+const emit = defineEmits(['toggle'])
+
 const isModalOpen = ref(false);
 const companies = ref([])
 const selectedSpeciality = ref('Toutes')
@@ -19,11 +23,6 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
-
-// Props et événements
-const props = defineProps({isOpen: Boolean})
-const emit = defineEmits(['toggle'])
-
 
 // Liste des spécialités disponibles dans la base de données
 const allSpecialities = computed(() => {

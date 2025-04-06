@@ -61,20 +61,15 @@ const submitForm = async () => {
 select {
   width: 100%;
   padding: 8px 12px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--gray-white-light);
   border-radius: 6px;
   font-size: 14px;
-  background-color: white;
+  background-color: var(--white);
   transition: border 0.2s;
 }
 
-select:focus {
-  border-color: #d20a11;
-  outline: none;
-}
-
 .form-container {
-  background: #ffffff;
+  background: var(--white);
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -84,7 +79,7 @@ select:focus {
 }
 
 h2 {
-  color: #d20a11;
+  color: var(--red-esigelec);
   text-align: center;
   margin-bottom: 20px;
 }
@@ -97,26 +92,28 @@ label {
   display: block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: #444;
+  color: var(--gray-dark);
 }
 
 input {
   width: 90%;
   padding: 8px 12px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--gray-white-light);
   border-radius: 6px;
   font-size: 14px;
   transition: border 0.2s;
+  background-color: var(--white);
+  color: var(--gray-dark);
 }
 
 input:focus {
-  border-color: #d20a11;
+  border-color: var(--red-esigelec);
   outline: none;
 }
 
 .submit-button {
-  background-color: #d20a11;
-  color: white;
+  background-color: var(--red-esigelec);
+  color: var(--white);
   border: none;
   border-radius: 6px;
   padding: 10px;
@@ -128,6 +125,6 @@ input:focus {
 }
 
 .submit-button:hover {
-  background-color: #a3080d;
+  background-color: var(--red-btn-hover);
 }
 </style>
