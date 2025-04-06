@@ -11,6 +11,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --red-esigelec: #C8102E;
+  --red-btn-hover: #a60d26;
+  --gray-dark: #4B4B4D;
+  --gray-light: #E6E7E8;
+  --white: #FFFFFF;
+  --black: #000000;
 }
 html, body, #app {
   margin: 0;
