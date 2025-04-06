@@ -93,7 +93,7 @@ h2 {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #FDF0D5;
+  background-color: var(--background-white);
   padding: 20px;
   overflow-y: auto;
   transition: transform 0.3s ease, width 0.3s ease;
