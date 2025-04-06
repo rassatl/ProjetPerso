@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed  } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import CompanyItem from './CompanyItem.vue'
@@ -7,11 +7,15 @@ import Modal from './Modal.vue';
 import AddCompanyForm from './AddCompanyForm.vue';
 
 const isModalOpen = ref(false);
+const companies = ref([])
+const selectedSpeciality = ref('Toutes')
 
+// Fonction pour ouvrir la fenêtre modale d'ajout d'entreprise
 const openModal = () => {
   isModalOpen.value = true;
 };
 
+// Fonction pour fermer la fenêtre modale d'ajout d'entreprise
 const closeModal = () => {
   isModalOpen.value = false;
 };
@@ -20,14 +24,15 @@ const closeModal = () => {
 const props = defineProps({isOpen: Boolean})
 const emit = defineEmits(['toggle'])
 
-const companies = ref([])
-const selectedSpeciality = ref('Toutes')
 
+// Liste des spécialités disponibles dans la base de données
 const allSpecialities = computed(() => {
   const list = companies.value.map(c => c.speciality).flat()
   const unique = [...new Set(list)]
   return ['Toutes', ...unique]
 })
+
+// Filtre pour afficher les entreprises selon la spécialité sélectionnée
 const filteredCompanies = computed(() => {
   if (selectedSpeciality.value === 'Toutes') return companies.value
   return companies.value.filter(c =>
@@ -35,6 +40,7 @@ const filteredCompanies = computed(() => {
   )
 })
 
+// Fonction pour récupérer la liste des entreprises depuis Firestore
 const fetchCompanies = async () => {
   const querySnapshot = await getDocs(collection(db, 'companies'));
   companies.value = querySnapshot.docs.map(doc => ({
@@ -44,15 +50,14 @@ const fetchCompanies = async () => {
   console.log('Companies fetched')
 };
 
-onMounted(fetchCompanies);
-
+// Fonction pour ouvrir/fermer la sidebar
 function toggleSideBar() {
   // console.log de l'état de la sidebar, le ! est important car on fait la modif de la value avant l'appel de toggleMenu
   console.log('Sidebar is now', !props.isOpen ? 'open ' + !props.isOpen : 'closed ' + !props.isOpen )
   emit('toggle')
 }
 
-
+onMounted(fetchCompanies);
 </script>
 
 <template>
@@ -61,20 +66,24 @@ function toggleSideBar() {
       class="sidebar"
       :class="{ closed: !isOpen }"
       :style="{ width: isOpen ? '400px' : '0' }">
+
+      <!-- Bouton pour rafraîchir la liste des entreprises --> 
       <div v-if="isOpen" class="refresh-action">
         <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir">⟳</button>
       </div>
 
 
+      <!-- Bouton d'ajout d'entreprise -->
       <div v-if="isOpen" class="top-right-action">
         <button @click="openModal" class="plus-button" aria-label="Ajouter">+</button>
       </div>
-
+      
       <hr class="separator" />
       <h1>Find My Company</h1>
       <hr class="separator" />
       <h2 v-if="isOpen">Liste des entreprises</h2>
 
+      <!-- Barre de filtre pour les spécialités -->
       <div v-if="isOpen" class="filter-bar">
         <label for="speciality-select">Spécialité :</label>
         <select id="speciality-select" v-model="selectedSpeciality">
@@ -91,6 +100,7 @@ function toggleSideBar() {
             :speciality="company.speciality"
             :name="company.name"
             :city="company.city"
+            :country="company.country"
             :pc="company.pc.toString()"
           />
         </li>
@@ -227,7 +237,7 @@ select {
   justify-content: center;
   transition: color 0.2s ease, transform 0.2s ease;
   padding: 0;
-  border-radius: 4px; /* Optionnel : coin doux */
+  border-radius: 4px;
   outline: none;
 }
 .plus-button:focus {
@@ -238,7 +248,7 @@ select {
   outline: none;
 }
 .plus-button:hover {
-  color: #a3080d;
+  color: var(--red-btn-hover);
   transform: scale(1.2);
 }
 
@@ -266,7 +276,7 @@ select {
 }
 
 .refresh-button:hover {
-  color: #a3080d;
+  color: var(--red-btn-hover);
   transform: scale(1.2);
 }
 

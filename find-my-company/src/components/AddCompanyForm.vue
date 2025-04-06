@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 

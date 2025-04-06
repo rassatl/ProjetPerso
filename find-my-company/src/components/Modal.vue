@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 
 defineProps({
   isOpen: Boolean,
@@ -9,6 +8,7 @@ const emit = defineEmits(['close']);
 </script>
 
 <template>
+  <!-- Utilisation de Teleport pour rendre le modal dans le body -->
   <Teleport to="body">
     <div v-if="isOpen" class="modal-overlay" @click.self="emit('close')">
       <div class="modal-content">
