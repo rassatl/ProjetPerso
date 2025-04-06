@@ -3,6 +3,18 @@ import { onMounted, ref, computed  } from 'vue'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import CompanyItem from './CompanyItem.vue'
+import Modal from './Modal.vue';
+import AddCompanyForm from './AddCompanyForm.vue';
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 // Props et événements
 const props = defineProps({isOpen: Boolean})
@@ -23,13 +35,16 @@ const filteredCompanies = computed(() => {
   )
 })
 
-onMounted(async () => {
-  const querySnapshot = await getDocs(collection(db, 'companies'))
+const fetchCompanies = async () => {
+  const querySnapshot = await getDocs(collection(db, 'companies'));
   companies.value = querySnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
-  }))
-})
+  }));
+  console.log('Companies fetched')
+};
+
+onMounted(fetchCompanies);
 
 function toggleSideBar() {
   // console.log de l'état de la sidebar, le ! est important car on fait la modif de la value avant l'appel de toggleMenu
@@ -37,9 +52,6 @@ function toggleSideBar() {
   emit('toggle')
 }
 
-function onPlusClick() {
-  console.log('🆕 Bouton + cliqué') // Tu pourras remplacer ça par une modale, un formulaire, etc.
-}
 
 </script>
 
@@ -49,8 +61,13 @@ function onPlusClick() {
       class="sidebar"
       :class="{ closed: !isOpen }"
       :style="{ width: isOpen ? '400px' : '0' }">
-      <div class="top-right-action" v-if="isOpen">
-        <button @click="onPlusClick" class="plus-button" aria-label="Ajouter">+</button>
+      <div v-if="isOpen" class="refresh-action">
+        <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir">⟳</button>
+      </div>
+
+
+      <div v-if="isOpen" class="top-right-action">
+        <button @click="openModal" class="plus-button" aria-label="Ajouter">+</button>
       </div>
 
       <hr class="separator" />
@@ -78,7 +95,13 @@ function onPlusClick() {
           />
         </li>
       </ul>
+
     </div>
+
+    <!-- Fenêtre d'ajout d'entreprise -->
+    <Modal :isOpen="isModalOpen" @close="closeModal">
+      <AddCompanyForm @refresh="fetchCompanies" />
+    </Modal>
 
     <!-- Bouton Ouverture/Fermeture sidebar -->
     <button
@@ -186,7 +209,7 @@ select {
 
 .top-right-action {
   position: absolute;
-  top: 0px;
+  top: -5px;
   right: 0px;
 }
 
@@ -219,7 +242,32 @@ select {
   transform: scale(1.2);
 }
 
+.refresh-action {
+  position: absolute;
+  top: -2px;
+  right: 30px;
+}
+.refresh-button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--red-esigelec);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  border-radius: 4px;
+  outline: none;
+}
 
-
+.refresh-button:hover {
+  color: #a3080d;
+  transform: scale(1.2);
+}
 
 </style>
