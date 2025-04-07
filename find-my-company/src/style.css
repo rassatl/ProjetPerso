@@ -11,14 +11,35 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --blue-esigelec: #213547;
+  --red-esigelec: #C8102E;
+  --red-btn-hover: #a60d26;
+  --background-white: #FDF0D5;
+  --gray-white-light: #cccccc;
+  --gray-dark: #313030;
+  --gray-light: #E6E7E8;
+  --white: #FFFFFF;
+  --black: #000000;
 }
 html, body, #app {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  flex-direction: column;
+  overflow: hidden;
+}
+select:hover{
+  cursor: pointer;
+}
+select{
+  background-color: var(--white);
+  color: var(--black);
 }
 
+h1{
+  color: var(--blue-esigelec);
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -39,6 +60,7 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: var()
 }
 
 button {
