@@ -4,61 +4,98 @@ import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import 'leaflet-control-geocoder';
 
 const emit = defineEmits(['refresh']);
 const speciality = ref('');
 const name = ref('');
-const adress = ref('');
+const address = ref('');
 const city = ref('');
 const pc = ref('');
 const country = ref('');
 const x = ref('');
 const y = ref('');
+const isLoading = ref(false);
 
 let map = null;
 let marker = null;
 const mapContainer = ref(null);
+let debounceTimeout = null;
 
 onMounted(() => {
- 
   map = L.map(mapContainer.value, {
     center: [46.656066, 0.364419],
     zoom: 5,
     minZoom: 3,
-    maxBounds: [
-      [-90, -180],
-      [90, 180],
-    ],
+    maxBounds: [[-90, -180], [90, 180]],
     worldCopyJump: false,
   });
-
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-
-
 });
 
-watch([x, y], ([newX, newY]) => {
-  if (!newX || !newY || isNaN(newX) || isNaN(newY)) return;
-  const latLng = [parseFloat(newX), parseFloat(newY)];
+watch([address, city, pc, country], ([newAddress, newCity, newPc, newCountry]) => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(async () => {
+    if (![newAddress, newCity, newPc, newCountry].every(field => field.trim() !== '')) {
+      console.warn("Tous les champs d'adresse doivent être remplis avant de rechercher.");
+      return;
+    }
+    const fullAddress = `${newAddress}, ${newPc} ${newCity}, ${newCountry}`;
+    if (fullAddress.trim().length > 10) {
+      isLoading.value = true;
+      try {
+        console.log("🛰️ Fetching address:", fullAddress);
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`, {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'VueApp/1.0 (youremail@example.com)' // pour éviter le blocage Nominatim
+          }
+        });
 
-  if (!marker) {
-    marker = L.marker(latLng).addTo(map);
-  } else {
-    marker.setLatLng(latLng);
-  }
+        const results = await response.json();
+        console.log("📡 Résultats:", results);
 
-  map.setView(latLng, 10);
+        if (results && results.length > 0) {
+          const { lat, lon } = results[0];
+          const latLng = L.latLng(lat, lon);
+          var redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+
+          if (!marker) {
+            marker = L.marker(latLng, {icon: redIcon}).addTo(map);
+          } else {
+            marker.setLatLng(latLng);
+          }
+
+          map.setView(latLng, 15);
+          x.value = parseFloat(lat);
+          y.value = parseFloat(lon);
+        } else {
+          console.warn("Aucun résultat pour:", fullAddress);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'appel à Nominatim:", error);
+      } finally {
+        isLoading.value = false;
+      }
+    }
+  }, 500);
 });
+
+
 
 const submitForm = async () => {
-  // Vérifie que tous les champs sont renseignés
-  if (!speciality.value || !name.value || !adress.value || !city.value || country.value || !pc.value || !x.value || !y.value) {
+  if (!speciality.value || !name.value || !address.value || !city.value || !country.value || !pc.value || !x.value || !y.value) {
     alert("Tous les champs sont obligatoires !");
     return;
   }
@@ -67,7 +104,7 @@ const submitForm = async () => {
     await addDoc(collection(db, 'companies'), {
       speciality: speciality.value,
       name: name.value,
-      adress: adress.value,
+      address: address.value,
       city: city.value,
       country: country.value,
       pc: pc.value,
@@ -75,10 +112,9 @@ const submitForm = async () => {
       y: y.value
     });
 
-    // Réinitialisation des champs
     speciality.value = '';
     name.value = '';
-    adress.value = '';
+    address.value = '';
     city.value = '';
     country.value = '';
     pc.value = '';
@@ -91,20 +127,21 @@ const submitForm = async () => {
     console.error("Erreur lors de l'ajout de l'entreprise : ", e);
   }
 };
-
 </script>
+
+
 
 <template>
   <div class="form-map-wrapper">
     <form class="form-container" @submit.prevent="submitForm">
       <h2>Ajouter une entreprise</h2>
       <div class="form-group">
-          <label for="speciality">Spécialité</label>
-          <select id="speciality" v-model="speciality" required>
-              <option disabled value="">-- Sélectionner une spécialité --</option>
-              <option value="Développement Logiciel, Tests et Qualité">Développement Logiciel, Tests et Qualité</option>
-              <option value="IA & Big Data">IA & Big Data</option>
-          </select>
+        <label for="speciality">Spécialité</label>
+        <select id="speciality" v-model="speciality" required>
+          <option disabled value="">-- Sélectionner une spécialité --</option>
+          <option value="Développement Logiciel, Tests et Qualité">Développement Logiciel, Tests et Qualité</option>
+          <option value="IA & Big Data">IA & Big Data</option>
+        </select>
       </div>
       <div class="form-group">
         <label for="name">Nom</label>
@@ -115,8 +152,8 @@ const submitForm = async () => {
         <input id="country" v-model="country" required />
       </div>
       <div class="form-group">
-        <label for="adress">Adresse</label>
-        <input id="adress" v-model="adress" required />
+        <label for="address">Adresse</label>
+        <input id="address" v-model="address" required />
       </div>
       <div class="form-group">
         <label for="city">Ville</label>
@@ -128,9 +165,11 @@ const submitForm = async () => {
       </div>
       <button type="submit" class="submit-button">Ajouter l'entreprise</button>
     </form>
+
     <div class="mini-map" ref="mapContainer"></div>
   </div>
 </template>
+
 
 <style scoped>
 

@@ -24,13 +24,6 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
-// Liste des spécialités disponibles dans la base de données
-const allSpecialities = computed(() => {
-  const list = companies.value.map(c => c.speciality).flat()
-  const unique = [...new Set(list)]
-  return ['Toutes', ...unique]
-})
-
 // Filtre pour afficher les entreprises selon la spécialité sélectionnée
 const filteredCompanies = computed(() => {
   if (selectedSpeciality.value === 'Toutes') return companies.value
