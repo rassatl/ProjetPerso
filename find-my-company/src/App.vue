@@ -7,9 +7,9 @@ import MapComponent from './components/MapView.vue'
 const isOpen = ref(true)
 
 // Watcher pour logger les changements
-watch(isOpen, (newVal) => {
-  console.log('🧭 isOpen value changed:', newVal)
-})
+// watch(isOpen, (newVal) => {
+//   console.log('🧭 isOpen value changed:', newVal)
+// })
 </script>
 
 

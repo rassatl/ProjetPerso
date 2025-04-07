@@ -12,7 +12,7 @@ const emit = defineEmits(['toggle'])
 
 const isModalOpen = ref(false);
 const companies = ref([])
-const selectedSpeciality = ref('Toutes')
+const selectedSpeciality = ref('')
 
 // Fonction pour ouvrir la fenêtre modale d'ajout d'entreprise
 const openModal = () => {
@@ -46,13 +46,10 @@ const fetchCompanies = async () => {
     id: doc.id,
     ...doc.data()
   }));
-  console.log('Companies fetched')
 };
 
 // Fonction pour ouvrir/fermer la sidebar
 function toggleSideBar() {
-  // console.log de l'état de la sidebar, le ! est important car on fait la modif de la value avant l'appel de toggleMenu
-  console.log('Sidebar is now', !props.isOpen ? 'open ' + !props.isOpen : 'closed ' + !props.isOpen )
   emit('toggle')
 }
 
@@ -85,10 +82,10 @@ onMounted(fetchCompanies);
       <!-- Barre de filtre pour les spécialités -->
       <div v-if="isOpen" class="filter-bar">
         <label for="speciality-select">Spécialité :</label>
-        <select id="speciality-select" v-model="selectedSpeciality">
-          <option v-for="spec in allSpecialities" :key="spec" :value="spec">
-            {{ spec }}
-          </option>
+        <select id="speciality-select" v-model="selectedSpeciality" required>
+            <option value="" >Toutes</option>
+            <option value="Développement Logiciel, Tests et Qualité">Développement Logiciel, Tests et Qualité</option>
+            <option value="IA & Big Data">IA & Big Data</option>
         </select>
       </div>
 

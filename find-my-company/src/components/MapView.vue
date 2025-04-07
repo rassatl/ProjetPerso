@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { db } from '../firebase'; // Assurez-vous que le chemin est correct
+import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const mapContainer = ref(null);
