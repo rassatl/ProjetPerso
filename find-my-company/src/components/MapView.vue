@@ -6,10 +6,14 @@ import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const mapContainer = ref(null);
-const props = defineProps({ isOpen: Boolean });
+const props = defineProps({ isOpen: Boolean});
+const emit = defineEmits(['update-visible-companies'])
+
+const companies = ref([])
 
 let map = null;
 
+// Icon pour les marqueurs
 var redIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -18,6 +22,20 @@ var redIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
+
+// Fonction pour mettre à jour les entreprises visibles sur la carte
+function updateVisibleCompanies() {
+  const bounds = map.getBounds()
+  emit('update-visible-companies', companies.value.filter(company => {
+    return (
+      company.x >= bounds.getSouth() &&
+      company.x <= bounds.getNorth() &&
+      company.y >= bounds.getWest() &&
+      company.y <= bounds.getEast()
+    )
+  }))
+}
+
 
 onMounted(async () => {
   // Initialiser la carte
@@ -44,20 +62,33 @@ onMounted(async () => {
 
   // Récupérer les entreprises depuis Firestore et ajouter des marqueurs
   await fetchCompaniesAndAddMarkers();
+
+  map.on('moveend', () => {
+    updateVisibleCompanies()
+  })
+  map.on('zoomend', () => {
+    updateVisibleCompanies()
+  })
+  map.on('resize', () => {
+    updateVisibleCompanies()
+  })
 });
 
 // Fonction pour récupérer les entreprises et ajouter des marqueurs
 const fetchCompaniesAndAddMarkers = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'companies'));
+    const companyList = [];
     querySnapshot.forEach((doc) => {
       const company = doc.data();
       const { x, y, name } = company;
       if (x && y && name) {
         const marker = L.marker([x, y], {icon: redIcon}).addTo(map);
         marker.bindPopup(name);
+        companyList.push({ ...company, marker });
       }
     });
+    companies.value = companyList
   } catch (error) {
     console.error('Erreur lors de la récupération des entreprises:', error);
   }
@@ -75,6 +106,7 @@ watch(
 </script>
 
 <template>
+  <!-- Conteneur pour la carte Leaflet -->
   <div
     id="map"
     ref="mapContainer"
