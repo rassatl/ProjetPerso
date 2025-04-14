@@ -46,6 +46,6 @@ const emit = defineEmits(['close']);
   border: none;
   font-size: 2rem;
   cursor: pointer;
-  z-index: 999;
+  z-index: 10000 !important;
 }
 </style>

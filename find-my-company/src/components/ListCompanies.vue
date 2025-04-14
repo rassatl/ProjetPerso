@@ -1,30 +1,57 @@
 <script setup>
+import { ref } from 'vue'
 import CompanyItem from './CompanyItem.vue'
-import { defineProps } from 'vue'
+import Modal from './Modal.vue'
+import CompanyInformations from './CompanyInformations.vue'
 
 const props = defineProps({
   companies: {
     type: Array,
     required: true
   }
-});
+})
+
+const isModalOpen = ref(false);
+const selectedCompany = ref(null);
+
+const openModal = (company) => {
+  isModalOpen.value = true;
+  selectedCompany.value = company;
+  if (props.isOpen) {
+    emit('toggle');
+  }
+};
+
+// Fonction pour fermer la fenêtre modale d'ajout d'entreprise
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 </script>
 
 <template>
-    <ul>
-      <li v-for="company in companies" :key="company.id">
-        <CompanyItem
-          :speciality="company.speciality"
-          :name="company.name"
-          :city="company.city"
-          :country="company.country"
-          :pc="company.pc.toString()"
-        />
-      </li>
-    </ul>
+  <ul>
+    <li v-for="company in companies" :key="company.id" @click="openModal(company)">
+      <CompanyItem
+        :speciality="company.speciality"
+        :name="company.name"
+        :city="company.city"
+        :country="company.country"
+        :pc="company.pc.toString()"
+      />
+    </li>
+  </ul>
+
+  <!-- Modal affiché si une entreprise est sélectionnée -->
+  <!-- <Modal v-if="selectedCompany" @close="closeCompanyModal"> -->
+    <!-- <CompanyInformations :company="selectedCompany" /> -->
+    <!-- <div> -->
+      <!-- <p>Modal ouvert !</p> -->
+    <!-- </div> -->
+  <!-- </Modal> -->
+  <Modal :isOpen="isModalOpen" @close="closeModal">
+    <CompanyInformations :company="selectedCompany" />
+  </Modal>
 </template>
-  
-  
 
 <style scoped>
 ul {
@@ -34,5 +61,6 @@ ul {
 }
 li {
   margin-bottom: 12px;
+  cursor: pointer;
 }
 </style>
