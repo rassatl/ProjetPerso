@@ -44,7 +44,8 @@ const emit = defineEmits(['close']);
   right: 0px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
+  z-index: 999;
 }
 </style>
