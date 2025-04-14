@@ -5,9 +5,10 @@ import { collection, getDocs } from 'firebase/firestore'
 import CompanyItem from './CompanyItem.vue'
 import Modal from './Modal.vue';
 import AddCompanyForm from './AddCompanyForm.vue';
+import ListCompanies from './ListCompanies.vue';
 
 // Props et événements
-const props = defineProps({isOpen: Boolean})
+const props = defineProps({isOpen: Boolean, visibleCompanies: Array})
 const emit = defineEmits(['toggle'])
 
 const isModalOpen = ref(false);
@@ -17,6 +18,9 @@ const selectedSpeciality = ref('')
 // Fonction pour ouvrir la fenêtre modale d'ajout d'entreprise
 const openModal = () => {
   isModalOpen.value = true;
+  if (props.isOpen) {
+    emit('toggle');
+  }
 };
 
 // Fonction pour fermer la fenêtre modale d'ajout d'entreprise
@@ -24,13 +28,18 @@ const closeModal = () => {
   isModalOpen.value = false;
 };
 
-// Filtre pour afficher les entreprises selon la spécialité sélectionnée
+// Filtre pour les entreprises selon la spécialité sélectionnée 
+// et la liste des entreprises visibles fournies par le composant MapView
 const filteredCompanies = computed(() => {
-  if (selectedSpeciality.value === 'Toutes') return companies.value
-  return companies.value.filter(c =>
+  let base = props.visibleCompanies.length ? props.visibleCompanies : companies.value
+  if (!selectedSpeciality.value || selectedSpeciality.value === 'Toutes') {
+    return base
+  }
+  return base.filter(c =>
     c.speciality.includes(selectedSpeciality.value)
   )
 })
+
 
 // Fonction pour récupérer la liste des entreprises depuis Firestore
 const fetchCompanies = async () => {
@@ -53,27 +62,26 @@ onMounted(fetchCompanies);
   <div>
     <div
       class="sidebar"
-      :class="{ closed: !isOpen }"
-      :style="{ width: isOpen ? '400px' : '0' }">
+      :class="{ closed: !props.isOpen }"
+      :style="{ width: props.isOpen ? '400px' : '0' }">
 
       <!-- Bouton pour rafraîchir la liste des entreprises --> 
-      <div v-if="isOpen" class="refresh-action">
+      <div v-if="props.isOpen" class="refresh-action">
         <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir">⟳</button>
       </div>
 
-
       <!-- Bouton d'ajout d'entreprise -->
-      <div v-if="isOpen" class="top-right-action">
+      <div v-if="props.isOpen" class="top-right-action">
         <button @click="openModal" class="plus-button" aria-label="Ajouter">+</button>
       </div>
       
       <hr class="separator" />
       <h1>Find My Company</h1>
       <hr class="separator" />
-      <h2 v-if="isOpen">Liste des entreprises</h2>
+      <h2 v-if="props.isOpen">Liste des entreprises</h2>
 
       <!-- Barre de filtre pour les spécialités -->
-      <div v-if="isOpen" class="filter-bar">
+      <div v-if="props.isOpen" class="filter-bar">
         <label for="speciality-select">Spécialité :</label>
         <select id="speciality-select" v-model="selectedSpeciality" required>
             <option value="" >Toutes</option>
@@ -83,18 +91,7 @@ onMounted(fetchCompanies);
       </div>
 
       <!-- Affiche la liste des entreprises si la sidebar est visible -->
-      <ul v-if="isOpen">
-        <li v-for="company in filteredCompanies" :key="company.id">
-          <CompanyItem
-            :speciality="company.speciality"
-            :name="company.name"
-            :city="company.city"
-            :country="company.country"
-            :pc="company.pc.toString()"
-          />
-        </li>
-      </ul>
-
+      <ListCompanies v-if="props.isOpen" :companies="filteredCompanies" />
     </div>
 
     <!-- Fenêtre d'ajout d'entreprise -->
@@ -106,11 +103,11 @@ onMounted(fetchCompanies);
     <button
       class="toggle-button"
       @click="toggleSideBar"
-      :class="{ closed: !isOpen }"
-      :style="{ left: isOpen ? '400px' : '0' }"
+      :class="{ closed: !props.isOpen }"
+      :style="{ left: props.isOpen ? '400px' : '0' }"
     >
       <!-- Flèche pour savoir dans quel sens la sidebar va aller si on clique sur le bouton -->
-      <span><i :class="['arrow', isOpen ? 'left' : 'right']"></i></span> 
+      <span><i :class="['arrow', props.isOpen ? 'left' : 'right']"></i></span> 
     </button>
   </div>
 </template>
@@ -148,15 +145,6 @@ h2 {
 }
 .sidebar.closed {
   transform: translateX(-100%);
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-li {
-  margin-bottom: 12px;
 }
 
 .toggle-button {
@@ -225,7 +213,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
   padding: 0;
   border-radius: 4px;
   outline: none;
@@ -259,7 +247,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
   padding: 0;
   border-radius: 4px;
   outline: none;

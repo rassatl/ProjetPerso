@@ -22,6 +22,15 @@ let marker = null;
 const mapContainer = ref(null);
 let debounceTimeout = null;
 
+var redIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
 onMounted(() => {
   map = L.map(mapContainer.value, {
     center: [46.656066, 0.364419],
@@ -37,9 +46,12 @@ onMounted(() => {
 
 });
 
+// Récupérer les entreprises depuis Firestore
 watch([address, city, pc, country], ([newAddress, newCity, newPc, newCountry]) => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(async () => {
+
+    // Vérifier si tous les champs d'adresse sont remplis
     if (![newAddress, newCity, newPc, newCountry].every(field => field.trim() !== '')) {
       console.warn("Tous les champs d'adresse doivent être remplis avant de rechercher.");
       return;
@@ -48,29 +60,23 @@ watch([address, city, pc, country], ([newAddress, newCity, newPc, newCountry]) =
     if (fullAddress.trim().length > 10) {
       isLoading.value = true;
       try {
-        console.log("🛰️ Fetching address:", fullAddress);
+        // console.log("🛰️ Fetching address:", fullAddress);
+        // Appel à l'API Nominatim pour la géocodage
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`, {
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'VueApp/1.0 (youremail@example.com)' // pour éviter le blocage Nominatim
+            'User-Agent': 'VueApp/1.0 (youremail@example.com)'
           }
         });
 
         const results = await response.json();
-        console.log("📡 Résultats:", results);
+        // console.log("📡 Résultats:", results);
 
         if (results && results.length > 0) {
           const { lat, lon } = results[0];
           const latLng = L.latLng(lat, lon);
-          var redIcon = new L.Icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-          });
 
+          // Ajouter un marqueur sur la carte
           if (!marker) {
             marker = L.marker(latLng, {icon: redIcon}).addTo(map);
           } else {
@@ -92,8 +98,7 @@ watch([address, city, pc, country], ([newAddress, newCity, newPc, newCountry]) =
   }, 500);
 });
 
-
-
+// Fonction pour soumettre le formulaire
 const submitForm = async () => {
   if (!speciality.value || !name.value || !address.value || !city.value || !country.value || !pc.value || !x.value || !y.value) {
     alert("Tous les champs sont obligatoires !");
