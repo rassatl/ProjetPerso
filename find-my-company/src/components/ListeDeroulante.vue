@@ -5,6 +5,7 @@ import { collection, getDocs } from 'firebase/firestore'
 import CompanyItem from './CompanyItem.vue'
 import Modal from './Modal.vue';
 import AddCompanyForm from './AddCompanyForm.vue';
+import ListCompanies from './ListCompanies.vue';
 
 // Props et événements
 const props = defineProps({isOpen: Boolean, visibleCompanies: Array})
@@ -90,18 +91,7 @@ onMounted(fetchCompanies);
       </div>
 
       <!-- Affiche la liste des entreprises si la sidebar est visible -->
-      <ul v-if="props.isOpen">
-        <li v-for="company in filteredCompanies" :key="company.id">
-          <CompanyItem
-            :speciality="company.speciality"
-            :name="company.name"
-            :city="company.city"
-            :country="company.country"
-            :pc="company.pc.toString()"
-          />
-        </li>
-      </ul>
-
+      <ListCompanies v-if="props.isOpen" :companies="filteredCompanies" />
     </div>
 
     <!-- Fenêtre d'ajout d'entreprise -->
@@ -155,15 +145,6 @@ h2 {
 }
 .sidebar.closed {
   transform: translateX(-100%);
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-li {
-  margin-bottom: 12px;
 }
 
 .toggle-button {
