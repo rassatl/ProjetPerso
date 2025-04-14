@@ -17,6 +17,9 @@ const selectedSpeciality = ref('')
 // Fonction pour ouvrir la fenêtre modale d'ajout d'entreprise
 const openModal = () => {
   isModalOpen.value = true;
+  if (props.isOpen) {
+    emit('toggle');
+  }
 };
 
 // Fonction pour fermer la fenêtre modale d'ajout d'entreprise
@@ -66,7 +69,6 @@ onMounted(fetchCompanies);
         <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir">⟳</button>
       </div>
 
-
       <!-- Bouton d'ajout d'entreprise -->
       <div v-if="props.isOpen" class="top-right-action">
         <button @click="openModal" class="plus-button" aria-label="Ajouter">+</button>
@@ -103,7 +105,7 @@ onMounted(fetchCompanies);
     </div>
 
     <!-- Fenêtre d'ajout d'entreprise -->
-    <Modal :props.isOpen="isModalOpen" @close="closeModal">
+    <Modal :isOpen="isModalOpen" @close="closeModal">
       <AddCompanyForm @refresh="fetchCompanies" />
     </Modal>
 

@@ -12,9 +12,9 @@ const visibleCompanies = ref([])
 //   console.log('🧭 isOpen value changed:', newVal)
 // })
 // watcher pour visibleCompanies
-watch(visibleCompanies, (newVal) => {
-  console.log('🧭 visibleCompanies value changed:', visibleCompanies.value.length)
-})
+// watch(visibleCompanies, (newVal) => {
+//   console.log('🧭 visibleCompanies value changed:', visibleCompanies.value.length)
+// })
 </script>
 
 

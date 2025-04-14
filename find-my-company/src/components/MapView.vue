@@ -55,10 +55,10 @@ onMounted(async () => {
     attribution: '&copy; OpenStreetMap contributors',
   }).addTo(map);
 
-  L.marker([46.656066, 0.364419], {icon: redIcon})
-    .addTo(map)
-    .bindPopup('ESIGELEC - Poitiers')
-    .openPopup()
+  // L.marker([46.656066, 0.364419], {icon: redIcon})
+  //   .addTo(map)
+  //   .bindPopup('ESIGELEC - Poitiers')
+  //   .openPopup()
 
   // Récupérer les entreprises depuis Firestore et ajouter des marqueurs
   await fetchCompaniesAndAddMarkers();
