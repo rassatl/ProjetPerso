@@ -41,13 +41,6 @@ const closeModal = () => {
     </li>
   </ul>
 
-  <!-- Modal affiché si une entreprise est sélectionnée -->
-  <!-- <Modal v-if="selectedCompany" @close="closeCompanyModal"> -->
-    <!-- <CompanyInformations :company="selectedCompany" /> -->
-    <!-- <div> -->
-      <!-- <p>Modal ouvert !</p> -->
-    <!-- </div> -->
-  <!-- </Modal> -->
   <Modal :isOpen="isModalOpen" @close="closeModal">
     <CompanyInformations :company="selectedCompany" />
   </Modal>

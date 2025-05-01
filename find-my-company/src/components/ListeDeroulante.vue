@@ -65,13 +65,23 @@ onMounted(fetchCompanies);
       :class="{ closed: !props.isOpen }"
       :style="{ width: props.isOpen ? '400px' : '0' }">
 
+      <!-- Bouton pour se connecter -->
+      <div v-if="props.isOpen" class="connection-action">
+        <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+      </div>
+
+      <!-- Bouton pour afficher la liste des entreprises en attentes --> 
+      <div v-if="props.isOpen" class="list-action">
+        <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+      </div>
+
       <!-- Bouton pour rafraîchir la liste des entreprises --> 
       <div v-if="props.isOpen" class="refresh-action">
         <button @click="fetchCompanies" class="refresh-button" aria-label="Rafraîchir">⟳</button>
       </div>
 
       <!-- Bouton d'ajout d'entreprise -->
-      <div v-if="props.isOpen" class="top-right-action">
+      <div v-if="props.isOpen" class="add-company-action">
         <button @click="openModal" class="plus-button" aria-label="Ajouter">+</button>
       </div>
       
@@ -195,10 +205,20 @@ select {
   font-size: 1rem;
 }
 
-.top-right-action {
+.add-company-action {
   position: absolute;
   top: -5px;
   right: 0px;
+}
+.list-action {
+  position: absolute;
+  top: 0px;
+  left: 30px;
+}
+.connection-action {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 .plus-button {
