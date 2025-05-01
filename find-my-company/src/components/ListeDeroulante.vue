@@ -9,7 +9,7 @@ import ListCompanies from './ListCompanies.vue';
 
 // Props et événements
 const props = defineProps({isOpen: Boolean, visibleCompanies: Array})
-const emit = defineEmits(['toggle'])
+const emit = defineEmits(['toggle', 'update-speciality'])
 
 const isModalOpen = ref(false);
 const companies = ref([])
@@ -83,7 +83,7 @@ onMounted(fetchCompanies);
       <!-- Barre de filtre pour les spécialités -->
       <div v-if="props.isOpen" class="filter-bar">
         <label for="speciality-select">Spécialité :</label>
-        <select id="speciality-select" v-model="selectedSpeciality" required>
+        <select id="speciality-select" v-model="selectedSpeciality" @change="$emit('update-speciality', selectedSpeciality)" required>
             <option value="" >Toutes</option>
             <option value="Développement Logiciel, Tests et Qualité">Développement Logiciel, Tests et Qualité</option>
             <option value="IA & Big Data">IA & Big Data</option>
